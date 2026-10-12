@@ -1,0 +1,23 @@
+{
+  "name": "r-md-viewer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Markdown viewer with document storage in the browser.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:pages": "npm run build && node scripts/package-pages.mjs",
+    "test": "npm run build && node tests/verify.mjs",
+    "screenshots": "npm run build && node scripts/screenshots.mjs",
+    "serve": "node scripts/serve.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "prettier": "3.9.10"
+  }
+}

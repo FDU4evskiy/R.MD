@@ -1,0 +1,9 @@
+/vendor/
+/index.html
+/_site/
+/node_modules/
+/.npm-cache/
+/tests/artifacts/
+/docs/screenshots/
+/R.MD/
+/package-lock.json

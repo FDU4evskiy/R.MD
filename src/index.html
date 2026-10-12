@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Локальный просмотрщик Markdown с поддержкой нескольких документов."
+    />
+    <title>R.MD | Markdown</title>
+    <!-- STYLES -->
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <button
+          id="sidebarToggle"
+          class="icon-button mobile-menu"
+          title="Список файлов"
+          aria-label="Список файлов"
+          aria-expanded="false"
+        >
+          <i data-lucide="panel-left"></i>
+        </button>
+        <a class="brand" href="#" aria-label="R.MD"
+          ><span class="brand-mark"><i data-lucide="file-text"></i></span><span>R.MD</span></a
+        >
+        <span class="header-divider"></span><span class="app-label">Просмотр Markdown</span>
+        <div class="header-actions">
+          <span
+            id="storageStatus"
+            class="local-badge"
+            data-save-state="loading"
+            role="status"
+            aria-live="polite"
+            title="Восстанавливаем документы из памяти браузера"
+            ><i data-lucide="shield-check"></i><span>Восстановление…</span></span
+          >
+          <button id="themeToggle" class="icon-button" title="Тёмная тема" aria-label="Тёмная тема">
+            <i data-lucide="moon"></i>
+          </button>
+          <button
+            class="button primary add-files"
+            title="Добавить файлы"
+            aria-label="Добавить файлы"
+          >
+            <i data-lucide="plus"></i><span>Добавить файлы</span>
+          </button>
+        </div>
+      </header>
+
+      <aside id="sidebar" class="sidebar" aria-label="Открытые файлы">
+        <div class="sidebar-title">
+          <h1>Документы <span id="fileCount" class="count">0</span></h1>
+          <button
+            id="sortToggle"
+            class="icon-button small"
+            title="Сортировать по имени"
+            aria-label="Сортировать по имени"
+          >
+            <i data-lucide="arrow-down-a-z"></i>
+          </button>
+        </div>
+        <div class="search-field">
+          <i data-lucide="search"></i
+          ><input
+            id="fileSearch"
+            type="search"
+            placeholder="Найти в документах"
+            aria-label="Найти в документах"
+            autocomplete="off"
+          /><kbd>/</kbd>
+        </div>
+        <div id="searchSummary" class="search-summary" hidden></div>
+        <nav id="fileList" class="file-list" aria-label="Список документов"></nav>
+        <div id="emptyList" class="empty-list">
+          <i data-lucide="files"></i><span>Пока нет файлов</span>
+        </div>
+        <div class="sidebar-bottom">
+          <span id="sidebarStatus">.md / .markdown</span
+          ><button
+            id="clearAll"
+            class="icon-button small"
+            title="Закрыть все файлы"
+            aria-label="Закрыть все файлы"
+            disabled
+          >
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
+      </aside>
+      <button
+        id="sidebarBackdrop"
+        class="sidebar-backdrop"
+        aria-label="Закрыть список файлов"
+        hidden
+      ></button>
+
+      <main class="workspace" id="main">
+        <div class="workspace-toolbar">
+          <div class="view-switch" role="group" aria-label="Режим просмотра">
+            <button id="singleView" class="view-button selected" aria-pressed="true">
+              <i data-lucide="file-text"></i><span>Документ</span>
+            </button>
+            <button id="allView" class="view-button" aria-pressed="false">
+              <i data-lucide="layout-grid"></i><span>Все файлы</span>
+            </button>
+          </div>
+          <div class="reader-tools">
+            <div id="columnControl" class="column-control" hidden>
+              <label for="columns"><i data-lucide="columns-3"></i></label
+              ><select id="columns" aria-label="Количество колонок">
+                <option value="2">2 колонки</option>
+                <option value="3">3 колонки</option>
+                <option value="1">1 колонка</option>
+              </select>
+            </div>
+            <button
+              id="fontDecrease"
+              class="icon-button small"
+              title="Уменьшить текст"
+              aria-label="Уменьшить текст"
+            >
+              <i data-lucide="minus"></i></button
+            ><span id="fontValue" class="font-value">16</span
+            ><button
+              id="fontIncrease"
+              class="icon-button small"
+              title="Увеличить текст"
+              aria-label="Увеличить текст"
+            >
+              <i data-lucide="plus"></i>
+            </button>
+            <span class="tool-divider"></span>
+            <button
+              id="sourceToggle"
+              class="icon-button"
+              title="Исходный Markdown"
+              aria-label="Исходный Markdown"
+              aria-pressed="false"
+            >
+              <i data-lucide="code-2"></i>
+            </button>
+            <button
+              id="outlineToggle"
+              class="icon-button"
+              title="Оглавление"
+              aria-label="Оглавление"
+              aria-pressed="true"
+            >
+              <i data-lucide="list"></i>
+            </button>
+          </div>
+        </div>
+
+        <section id="emptyState" class="empty-state">
+          <div class="empty-icon" aria-hidden="true"><i data-lucide="files"></i></div>
+          <h2>Нет открытых файлов</h2>
+          <button class="button primary add-files">
+            <i data-lucide="folder-open"></i>Выбрать файлы
+          </button>
+          <span class="file-types">.md · .markdown · .mdown</span>
+        </section>
+
+        <section id="singlePane" class="single-pane" hidden>
+          <div class="document-bar">
+            <div class="document-name">
+              <i data-lucide="file-text"></i><span id="activeName"></span>
+            </div>
+            <button
+              id="downloadFile"
+              class="icon-button small"
+              title="Скачать Markdown"
+              aria-label="Скачать Markdown"
+            >
+              <i data-lucide="download"></i>
+            </button>
+          </div>
+          <div id="readingLayout" class="reading-layout">
+            <div id="readerScroll" class="reader-scroll">
+              <article id="reader" class="markdown-body"></article>
+              <pre id="source" class="source-body" hidden></pre>
+            </div>
+            <aside id="outline" class="outline" aria-label="Оглавление">
+              <h2>Оглавление</h2>
+              <nav id="outlineLinks"></nav>
+            </aside>
+          </div>
+        </section>
+
+        <section id="allPane" class="all-pane" hidden>
+          <div class="collection-heading">
+            <h2>Все документы</h2>
+            <span id="collectionCount"></span>
+          </div>
+          <div id="documentGrid" class="document-grid"></div>
+          <div id="noResults" class="no-results" hidden>
+            <i data-lucide="search-x"></i>
+            <h3>Ничего не найдено</h3>
+          </div>
+        </section>
+        <footer class="status-bar">
+          <div>
+            <span class="status-dot"></span><span id="documentStatus">Нет открытых файлов</span>
+          </div>
+          <span id="readingProgress">R.MD</span>
+        </footer>
+      </main>
+    </div>
+    <input
+      id="fileInput"
+      type="file"
+      accept=".md,.markdown,.mdown,.mkd,.mkdn,text/markdown"
+      multiple
+      hidden
+    />
+    <div id="dropOverlay" class="drop-overlay" hidden>
+      <div>
+        <i data-lucide="files"></i>
+        <h2>Открыть документы</h2>
+        <span>Markdown</span>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" hidden>
+      <span id="toastText"></span><button id="toastUndo" hidden>Вернуть</button
+      ><button
+        id="toastClose"
+        class="icon-button small"
+        title="Закрыть уведомление"
+        aria-label="Закрыть уведомление"
+      >
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <!-- VENDORS -->
+    <!-- APP -->
+  </body>
+</html>
